@@ -1,0 +1,22 @@
+FROM debian:bookworm-slim
+
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    php \
+    python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    pip3 install -y --no-install-recommends \
+    virtualenv && \
+    rm -rf /root/.cache/pip
+
+WORKDIR /Telegram-Smart-Reminder/
+
+COPY . /Telegram-Smart-Reminder/

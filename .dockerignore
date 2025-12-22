@@ -1,0 +1,15 @@
+.dockerignore
+docker
+.git
+.gitignore
+README.md
+LICENSE
+.vscode
+__pycache__
+*.pyc
+.env
+.env.*
+logs
+*.log
+data/
+.dbsqlite3
