@@ -7,8 +7,6 @@ LICENSE
 .vscode
 __pycache__
 *.pyc
-.env
-.env.*
 logs
 *.log
 data/

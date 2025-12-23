@@ -26,7 +26,7 @@ echo "Checking the necessary requirements for running the bot..."
 
 # Checking network connection
 echo "  - Checking network connection..."
-# دریافت آرگومان‌ها از Bash
+
 if ! ping -c 1 google.com &> /dev/null
 then
   echo "-------------------------------------------------------"
@@ -91,13 +91,13 @@ echo
 docker rm -f telegram-smart-reminder-container &> /dev/null
 
 if [ "$background" = true ] ; then
-    docker run --restart unless-stopped -d -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
+    docker run --volume ../data:/data --restart unless-stopped -d -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
     echo "The bot is running in the background."
     echo "Use: 'docker logs -f telegram-smart-reminder-container' to view logs."
     echo
     exit 0
 elif [ "$background" = false ] ; then
-    docker run -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
+    docker run --volume ../data:/data -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
 else
     echo "Invalid background setting. Please set it to true or false (in the top of ./docker/run.sh after '# Settings')."
     echo
