@@ -17,6 +17,6 @@ RUN apt-get update -y && apt-get upgrade -y && \
     virtualenv && \
     rm -rf /root/.cache/pip
 
-WORKDIR /Telegram-Smart-Reminder/
+WORKDIR /TeleDocker/
 
-COPY . /Telegram-Smart-Reminder/
+COPY . /TeleDocker/

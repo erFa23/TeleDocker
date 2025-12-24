@@ -29,12 +29,12 @@ echo "  - Checking network connection..."
 
 if ! ping -c 1 google.com &> /dev/null
 then
-  echo "-------------------------------------------------------"
-  echo "Error: No network connection detected."
-  echo "Please check your internet connection and try again."
-  echo "-------------------------------------------------------"
-  echo
-  exit 1
+    echo "-------------------------------------------------------"
+    echo "Error: No network connection detected."
+    echo "Please check your internet connection and try again."
+    echo "-------------------------------------------------------"
+    echo
+    exit 1
 fi
 echo "    Network connection is active."
 echo
@@ -44,12 +44,12 @@ echo "  - Checking connectivity to Telegram servers..."
 
 if ! curl -s --max-time 5 https://api.telegram.org &> /dev/null
 then
-  echo "-------------------------------------------------------"
-  echo "Error: Unable to connect to Telegram servers."
-  echo "Please check your network settings and try again."
-  echo "-------------------------------------------------------"
-  echo
-  exit 1
+    echo "-------------------------------------------------------"
+    echo "Error: Unable to connect to Telegram servers."
+    echo "Please check your network settings and try again."
+    echo "-------------------------------------------------------"
+    echo
+    exit 1
 fi
 echo "    Connectivity to Telegram servers is verified."
 echo
@@ -67,12 +67,12 @@ fi
 echo "- Checking if Docker is installed"
 if ! command -v docker &> /dev/null
 then
-  echo "-------------------------------------------------------"
-  echo "Error: Docker is not installed on this system."
-  echo "Please install Docker first, then run this script. You can use this command to install Docker:"
-  echo ""sudo apt install docker.io" on Ubuntu/Debian/Debian-based systems"
-  echo "-------------------------------------------------------"
-  exit 1
+    echo "-------------------------------------------------------"
+    echo "Error: Docker is not installed on this system."
+    echo "Please install Docker first, then run this script. You can use this command to install Docker:"
+    echo ""sudo apt install docker.io" on Ubuntu/Debian/Debian-based systems"
+    echo "-------------------------------------------------------"
+    exit 1
 fi
 
 echo "**All requirements are met.** Proceeding to the next step..."
