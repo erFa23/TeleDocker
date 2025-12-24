@@ -83,6 +83,7 @@ python3 your_bot_script.py
 - #### Support for `settings.json` for easy configuration.
 - #### Custom volume mounting via settings.
 - #### Auto-restart policy for bots.
+- #### Support for other langueges such as php, node.js and C++ (using g++ compiler)
 
 <br>
 
