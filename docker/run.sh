@@ -12,21 +12,6 @@ START_MODE="shell" # Options: "shell" or "log". If "shell" is selected, the cont
 
 echo "Checking the necessary requirements for running the bot..."
 
-# Checking network connection
-echo "  - Checking network connection..."
-
-if ! ping -c 1 google.com &> /dev/null
-then
-    echo "-------------------------------------------------------"
-    echo "Error: No network connection detected."
-    echo "Please check your internet connection and try again."
-    echo "-------------------------------------------------------"
-    echo
-    exit 1
-fi
-echo "    Network connection is active."
-echo
-
 # Checking if curl is installed (Corrected Logic)
 echo "  - Checking if curl is installed..."
 if ! command -v curl &> /dev/null
@@ -41,43 +26,52 @@ then
     exit 1
 fi
 echo "    curl is installed."
+echo
 
 # Checking network connection
 echo "  - Checking network connection..."
-if ! curl -s --head --request GET https://www.google.com | grep "200 OK" &> /dev/null
-then
+
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 https://www.google.com)
+
+if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 400 ]]; then
     echo "-------------------------------------------------------"
-    echo "Error: No network connection detected."
+    echo "Error: No network connection detected (HTTP Status: $HTTP_STATUS)."
     echo "Please check your internet connection and try again."
     echo "-------------------------------------------------------"
     echo
     exit 1
 fi
-echo "    Network connection is active."
 
-# Checking the connectivity to Telegram servers
+echo "    Network connection is active (Status: $HTTP_STATUS)."
+echo
+
+# Checking connectivity to Telegram servers
 
 echo "  - Checking connectivity to Telegram servers..."
 
-if ! curl -s --max-time 10 https://api.telegram.org &> /dev/null
-then
+
+TEL_HTTP_STATUS=$(curl -s -o /dev/null -L -w "%{http_code}" --connect-timeout 5 https://api.telegram.org)
+
+if [[ "$TEL_HTTP_STATUS" -lt 200 || "$TEL_HTTP_STATUS" -ge 400 ]]; then
     echo "-------------------------------------------------------"
-    echo "Error: Unable to connect to Telegram servers."
-    echo "Possible reasons: Internet issues or Telegram is filtered/blocked."
+    echo "Error: Cannot connect to Telegram servers (HTTP Status: $TEL_HTTP_STATUS)."
     echo "-------------------------------------------------------"
     echo
     exit 1
 fi
-echo "    Connectivity to Telegram servers is verified."
+echo "    Connectivity to Telegram servers is verified. (Status: $TEL_HTTP_STATUS)."
 echo
 
 # An End-to-End check using native python3 script to verify network integrity
 echo "  - Performing end-to-end network integrity check using Python script..."
 TEST_MESSAGE="CONNECTION_OK"
-if ! python3 network_check.py $PORT $TEST_MESSAGE; then
+if ! python3 ./docker/network_check.py $PORT $TEST_MESSAGE; then
     echo "Requirement check failed. exiting..."
     exit 1
 fi
+
+echo "    End-to-end network integrity check passed."
+echo
 
 # Check if Docker is installed
 
@@ -92,6 +86,10 @@ then
     exit 1
 fi
 
+echo "    Docker is installed."
+echo
+
+# All checks passed
 echo "**All requirements are met.** Proceeding to the next step..."
 echo
 
@@ -113,7 +111,7 @@ if [ "$START_MODE" = "shell" ] ; then
     docker run \
     -d \
     -it \
-    --volume ../data:/data \
+    --volume $(pwd)/data:/data \
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder && \
@@ -124,7 +122,7 @@ elif [ "$START_MODE" = "log" ] ; then
     echo "To access the container terminal while it is running, open another terminal window and use:"
     echo "docker exec -it telegram-smart-reminder-container /bin/bash"
     docker run \
-    --volume ../data:/data \
+    --volume $(pwd)/data:/data \
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder
