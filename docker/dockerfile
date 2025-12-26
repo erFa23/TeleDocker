@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
-RUN apt update -y && apt upgrade -y && \
-    apt install -y --no-install-recommends \
+RUN apt-get update -y && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     git \
@@ -11,12 +11,10 @@ RUN apt update -y && apt upgrade -y && \
     libffi-dev \
     python3-dev \
     # php \
+    virtualenv \
     python3-pip && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    pip3 install -y --no-install-recommends \
-    virtualenv && \
-    rm -rf /root/.cache/pip
-
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /project/
 
 COPY . /TeleDocker/
