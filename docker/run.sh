@@ -44,7 +44,7 @@ echo "    curl is installed."
 
 # Checking network connection
 echo "  - Checking network connection..."
-if ! curl -s --head --request GET https://www.google.com | grep "200 OK" > /dev/null
+if ! curl -s --head --request GET https://www.google.com | grep "200 OK" &> /dev/null
 then
     echo "-------------------------------------------------------"
     echo "Error: No network connection detected."
