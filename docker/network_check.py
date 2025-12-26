@@ -45,5 +45,4 @@ if __name__ == "__main__":
     if not check_port_integrity(target_port, test_msg):
         sys.exit(1)
     
-    print("\n** All Python-based network checks passed. **")
     sys.exit(0)
