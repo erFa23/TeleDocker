@@ -5,8 +5,7 @@
 #-----------------------------------------------------------------------
 
 PORT=8080 # Port to run the bot on
-background=true # Run in background by default type (WARNING: If you change this to false you should open container terminal manually using 'docker exec -it telegram-smart-reminder-container /bin/bash' in another terminal)
-
+START_MODE="shell" # Options: "shell" or "log". If "shell" is selected, the container will start with a bash shell. If "log" is selected, it will display the logs directly. (WARNING: If you change this to false you should open container terminal manually using 'docker exec -it telegram-smart-reminder-container /bin/bash' in another terminal)
 #-----------------------------------------------------------------------
 # Requirement Checks
 #-----------------------------------------------------------------------
@@ -28,28 +27,43 @@ fi
 echo "    Network connection is active."
 echo
 
-# Checking if curl is installed
-
-if ! curl -s --max-time 5 https://google.com &> /dev/null
+# Checking if curl is installed (Corrected Logic)
+echo "  - Checking if curl is installed..."
+if ! command -v curl &> /dev/null
 then
     echo "-------------------------------------------------------"
-    echo "Error: curl is not installed"
+    echo "Error: curl is not installed on this system."
     echo "Please install curl and try again."
     echo "You can use this command to install curl:"
-    echo "'sudo apt install curl' on Ubuntu/Debian/Debian-based systems"
+    echo "  sudo apt update && sudo apt install curl"
     echo "-------------------------------------------------------"
     echo
     exit 1
 fi
+echo "    curl is installed."
+
+# Checking network connection
+echo "  - Checking network connection..."
+if ! curl -s --head --request GET https://www.google.com | grep "200 OK" > /dev/null
+then
+    echo "-------------------------------------------------------"
+    echo "Error: No network connection detected."
+    echo "Please check your internet connection and try again."
+    echo "-------------------------------------------------------"
+    echo
+    exit 1
+fi
+echo "    Network connection is active."
 
 # Checking the connectivity to Telegram servers
+
 echo "  - Checking connectivity to Telegram servers..."
 
-if ! curl -s --max-time 5 https://api.telegram.org &> /dev/null
+if ! curl -s --max-time 10 https://api.telegram.org &> /dev/null
 then
     echo "-------------------------------------------------------"
     echo "Error: Unable to connect to Telegram servers."
-    echo "Please check your network settings and try again."
+    echo "Possible reasons: Internet issues or Telegram is filtered/blocked."
     echo "-------------------------------------------------------"
     echo
     exit 1
@@ -57,7 +71,7 @@ fi
 echo "    Connectivity to Telegram servers is verified."
 echo
 
-# An End-to-End check using Native python3 script
+# An End-to-End check using native python3 script to verify network integrity
 echo "  - Performing end-to-end network integrity check using Python script..."
 TEST_MESSAGE="CONNECTION_OK"
 if ! python3 network_check.py $PORT $TEST_MESSAGE; then
@@ -94,7 +108,7 @@ echo
 docker stop telegram-smart-reminder-container &> /dev/null
 docker rm telegram-smart-reminder-container &> /dev/null || true
 
-if [ "$background" = true ] ; then
+if [ "$START_MODE" = "shell" ] ; then
     echo "Running in background..."
     docker run \
     -d \
@@ -105,7 +119,7 @@ if [ "$background" = true ] ; then
     telegram-smart-reminder && \
     docker exec -it telegram-smart-reminder-container bash -c "echo 'The container is running in the background. This is a terminal session inside the container.' && echo 'Type \"exit\" to leave this session, or \"kill 1\" to stop the container.' && echo && echo 'You can open another terminal on your host and use:' && echo '  docker exec -it telegram-smart-reminder-container /bin/bash  # To open a new shell' && echo '  docker logs -f telegram-smart-reminder-container       # To view logs' && echo && bash"
 
-elif [ "$background" = false ] ; then
+elif [ "$START_MODE" = "log" ] ; then
     echo "Container is running in the foreground. Use Ctrl+C to stop the container."
     echo "To access the container terminal while it is running, open another terminal window and use:"
     echo "docker exec -it telegram-smart-reminder-container /bin/bash"
