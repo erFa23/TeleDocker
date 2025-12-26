@@ -5,22 +5,11 @@
 #-----------------------------------------------------------------------
 
 PORT=8080 # Port to run the bot on
-background=true # Run in background by default type
+background=true # Run in background by default type (WARNING: If you change this to false you should open container terminal manually using 'docker exec -it telegram-smart-reminder-container /bin/bash' in another terminal)
 
 #-----------------------------------------------------------------------
 # Requirement Checks
 #-----------------------------------------------------------------------
-
-echo "do you want to see logs(if you say no the bot will run in background)? (y/n)"
-read show_logs
-if [ "$show_logs" == "n" ]; then
-    background=true
-elif [ "$show_logs" == "y" ]; then
-    background=false
-else
-    echo "Invalid input. Please enter 'y' or 'n'."
-    exit 1
-fi
 
 echo "Checking the necessary requirements for running the bot..."
 
@@ -38,6 +27,20 @@ then
 fi
 echo "    Network connection is active."
 echo
+
+# Checking if curl is installed
+
+if ! curl -s --max-time 5 https://google.com &> /dev/null
+then
+    echo "-------------------------------------------------------"
+    echo "Error: curl is not installed"
+    echo "Please install curl and try again."
+    echo "You can use this command to install curl:"
+    echo "'sudo apt install curl' on Ubuntu/Debian/Debian-based systems"
+    echo "-------------------------------------------------------"
+    echo
+    exit 1
+fi
 
 # Checking the connectivity to Telegram servers
 echo "  - Checking connectivity to Telegram servers..."
@@ -88,18 +91,33 @@ docker build -f docker/dockerfile -t telegram-smart-reminder .
 echo "Running the Docker container..."
 echo
 
-docker rm -f telegram-smart-reminder-container &> /dev/null
+docker stop telegram-smart-reminder-container &> /dev/null
+docker rm telegram-smart-reminder-container &> /dev/null || true
 
 if [ "$background" = true ] ; then
-    docker run --volume ../data:/data --restart unless-stopped -d -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
-    echo "The bot is running in the background."
-    echo "Use: 'docker logs -f telegram-smart-reminder-container' to view logs."
-    echo
-    exit 0
+    echo "Running in background..."
+    docker run \
+    -d \
+    -it \
+    --volume ../data:/data \
+    -p $PORT:$PORT \
+    --name telegram-smart-reminder-container \
+    telegram-smart-reminder && \
+    docker exec -it telegram-smart-reminder-container bash -c "echo 'The container is running in the background. This is a terminal session inside the container.' && echo 'Type \"exit\" to leave this session, or \"kill 1\" to stop the container.' && echo && echo 'You can open another terminal on your host and use:' && echo '  docker exec -it telegram-smart-reminder-container /bin/bash  # To open a new shell' && echo '  docker logs -f telegram-smart-reminder-container       # To view logs' && echo && bash"
+
 elif [ "$background" = false ] ; then
-    docker run --volume ../data:/data -p $PORT:$PORT --name telegram-smart-reminder-container telegram-smart-reminder
+    echo "Container is running in the foreground. Use Ctrl+C to stop the container."
+    echo "To access the container terminal while it is running, open another terminal window and use:"
+    echo "docker exec -it telegram-smart-reminder-container /bin/bash"
+    docker run \
+    --volume ../data:/data \
+    -p $PORT:$PORT \
+    --name telegram-smart-reminder-container \
+    telegram-smart-reminder
+
 else
     echo "Invalid background setting. Please set it to true or false (in the top of ./docker/run.sh after '# Settings')."
     echo
     exit 1
 fi
+

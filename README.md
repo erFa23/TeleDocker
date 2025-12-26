@@ -64,6 +64,18 @@ chmod +x ./docker/run.sh
 - #### The script will automatically build the image and open a root command line inside the container. Inside the container, your files are located at /project.
 ## 🛠 Usage inside the Container
 
+### 🔄 File Synchronization Logic
+
+#### TeleDocker handles your files in two distinct ways to balance performance and flexibility:
+
+- #### Project Directory (/project/): All files and folders added to the root of TeleDocker are copied into the container.
+
+    **Note**: If you edit these files while the container is running, changes will not be reflected until the container is restarted.
+
+- #### Data Directory (/data/): This folder is mounted directly into the container.
+
+    **Live Sync**: Any changes made to files inside this folder (like SQLite databases or logs) are reflected instantly both inside and outside the container without needing a restart.
+
 #### Once the terminal opens, you are inside the Debian environment. You can run your bot as usual:
 
 ```Bash
@@ -83,7 +95,7 @@ python3 your_bot_script.py
 - #### Support for `settings.json` for easy configuration.
 - #### Custom volume mounting via settings.
 - #### Auto-restart policy for bots.
-- #### Support for other langueges such as php, node.js and C++ (using g++ compiler)
+- #### Support for other languages such as php, node.js and C++ (using g++ compiler)
 
 <br>
 

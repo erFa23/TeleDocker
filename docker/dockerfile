@@ -10,13 +10,13 @@ RUN apt-get update -y && apt-get upgrade -y && \
     libssl-dev \
     libffi-dev \
     python3-dev \
-    php \
+    # php \
     python3-pip && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     pip3 install -y --no-install-recommends \
     virtualenv && \
     rm -rf /root/.cache/pip
 
-WORKDIR /TeleDocker/
+WORKDIR /project/
 
 COPY . /TeleDocker/
