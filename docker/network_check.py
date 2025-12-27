@@ -18,7 +18,7 @@ def start_temp_server(port, message):
         pass
 
 def check_port_integrity(port, message):
-    print(f"  - Starting network integrity test on port {port}...")
+    print(f"    Starting network integrity test on port {port}...")
     
     t = threading.Thread(target=start_temp_server, args=(port, message), daemon=True)
     t.start()

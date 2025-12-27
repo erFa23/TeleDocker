@@ -73,7 +73,6 @@ if ! python3 ./docker/network_check.py $PORT $TEST_MESSAGE; then
     exit 1
 fi
 
-echo "    End-to-end network integrity check passed."
 echo
 
 # Check if Docker is installed
@@ -132,7 +131,7 @@ elif [ "$START_MODE" = "log" ] ; then
     telegram-smart-reminder
 
     docker stop telegram-smart-reminder-container &> /dev/null
-    
+
 else
     echo "Invalid background setting. Please set it to true or false (in the top of ./docker/run.sh after '# Settings')."
     echo
