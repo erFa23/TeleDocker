@@ -10,6 +10,7 @@ RUN apt-get update -y && apt-get upgrade -y && \
     libssl-dev \
     libffi-dev \
     python3-dev \
+    nano \
     # php \
     virtualenv \
     python3-pip && \
@@ -17,4 +18,4 @@ RUN apt-get update -y && apt-get upgrade -y && \
     
 WORKDIR /project/
 
-COPY . /TeleDocker/
+COPY . /project/

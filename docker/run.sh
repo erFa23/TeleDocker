@@ -119,7 +119,7 @@ if [ "$START_MODE" = "shell" ] ; then
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder && \
-    docker exec -it telegram-smart-reminder-container bash -c "echo 'The container is running in the background. This is a terminal session inside the container.' && echo 'Type \"exit\" to leave this session, or \"kill 1\" to stop the container.' && echo && echo 'You can open another terminal on your host and use:' && echo '  docker exec -it telegram-smart-reminder-container /bin/bash  # To open a new shell' && echo '  docker logs -f telegram-smart-reminder-container       # To view logs' && echo && bash"
+    docker exec -it telegram-smart-reminder-container bash -c "echo 'The container is running in the background. This is a terminal session inside the container.' && echo 'Type \"exit\" to stop the container. IF YOU RUN \"exit\" THE SCRIPT WILL AUTOMATICALLY STOP THE CONTAINER.' && echo && echo 'You can open another terminal on your host and use:' && echo '  docker exec -it telegram-smart-reminder-container /bin/bash  # To open a new shell' && echo '  docker logs -f telegram-smart-reminder-container  # To view logs' && echo && bash"
 
 elif [ "$START_MODE" = "log" ] ; then
     echo "Container is running in the foreground. Use Ctrl+C to stop the container."
@@ -131,9 +131,10 @@ elif [ "$START_MODE" = "log" ] ; then
     --name telegram-smart-reminder-container \
     telegram-smart-reminder
 
+    docker stop telegram-smart-reminder-container &> /dev/null
+    
 else
     echo "Invalid background setting. Please set it to true or false (in the top of ./docker/run.sh after '# Settings')."
     echo
     exit 1
 fi
-
