@@ -72,7 +72,7 @@ chmod +x ./docker/run.sh
 
     **Note**: If you edit these files while the container is running, changes will not be reflected until the container is restarted.
 
-- #### Data Directory (/project/data/): This folder is mounted directly into the container.
+- #### Data Directory (/project/data/): This folder is mounted directly into the containe (./data is mounted to /project/data).
 
     **Live Sync**: Any changes made to files inside this folder (like SQLite databases or logs) are reflected instantly both inside and outside the container without needing a restart.
 
