@@ -10,12 +10,13 @@ START_MODE="shell" # Options: "shell" or "log". If "shell" is selected, the cont
 # Requirement Checks
 #-----------------------------------------------------------------------
 
-echo "Checking the necessary requirements for running the bot..."
+echo "** Checking the necessary requirements for running the bot **"
 
 # Checking if curl is installed (Corrected Logic)
 echo "  - Checking if curl is installed..."
 if ! command -v curl &> /dev/null
 then
+    echo
     echo "-------------------------------------------------------"
     echo "Error: curl is not installed on this system."
     echo "Please install curl and try again."
@@ -34,6 +35,7 @@ echo "  - Checking network connection..."
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 5 https://www.google.com)
 
 if [[ "$HTTP_STATUS" -lt 200 || "$HTTP_STATUS" -ge 400 ]]; then
+    echo
     echo "-------------------------------------------------------"
     echo "Error: No network connection detected (HTTP Status: $HTTP_STATUS)."
     echo "Please check your internet connection and try again."
@@ -53,6 +55,7 @@ echo "  - Checking connectivity to Telegram servers..."
 TEL_HTTP_STATUS=$(curl -s -o /dev/null -L -w "%{http_code}" --connect-timeout 5 https://api.telegram.org)
 
 if [[ "$TEL_HTTP_STATUS" -lt 200 || "$TEL_HTTP_STATUS" -ge 400 ]]; then
+    echo
     echo "-------------------------------------------------------"
     echo "Error: Cannot connect to Telegram servers (HTTP Status: $TEL_HTTP_STATUS)."
     echo "-------------------------------------------------------"
@@ -66,7 +69,7 @@ echo
 echo "  - Performing end-to-end network integrity check using Python script..."
 TEST_MESSAGE="CONNECTION_OK"
 if ! python3 ./docker/network_check.py $PORT $TEST_MESSAGE; then
-    echo "Requirement check failed. exiting..."
+    echo
     exit 1
 fi
 
@@ -83,6 +86,7 @@ then
     echo "Please install Docker first, then run this script. You can use this command to install Docker:"
     echo ""sudo apt install docker.io" on Ubuntu/Debian/Debian-based systems"
     echo "-------------------------------------------------------"
+    echo
     exit 1
 fi
 
@@ -111,7 +115,7 @@ if [ "$START_MODE" = "shell" ] ; then
     docker run \
     -d \
     -it \
-    --volume $(pwd)/data:/data \
+    --volume $(pwd)/data:/project/data \
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder && \
@@ -122,7 +126,7 @@ elif [ "$START_MODE" = "log" ] ; then
     echo "To access the container terminal while it is running, open another terminal window and use:"
     echo "docker exec -it telegram-smart-reminder-container /bin/bash"
     docker run \
-    --volume $(pwd)/data:/data \
+    --volume $(pwd)/data:/project/data \
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder

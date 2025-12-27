@@ -33,8 +33,11 @@ def check_port_integrity(port, message):
                 print(f"    Success: Port {port} and local network path are clear.")
                 return True
     except Exception as e:
+        print()
+        print("---------------------------------------------------------------")
         print(f"\nError: Connection to port {port} failed!")
         print(f"   Reason: \n{e}")
+        print("---------------------------------------------------------------")
         return False
     return False
 
