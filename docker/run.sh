@@ -11,6 +11,7 @@ START_MODE="shell" # Options: "shell" or "log". If "shell" is selected, the cont
 #-----------------------------------------------------------------------
 
 echo "** Checking the necessary requirements for running the bot **"
+echo
 
 # Checking if curl is installed (Corrected Logic)
 echo "  - Checking if curl is installed..."
@@ -77,7 +78,7 @@ echo
 
 # Check if Docker is installed
 
-echo "- Checking if Docker is installed"
+echo "  - Checking if Docker is installed"
 if ! command -v docker &> /dev/null
 then
     echo "-------------------------------------------------------"
@@ -103,6 +104,7 @@ echo
 
 docker build -f docker/dockerfile -t telegram-smart-reminder .
 
+echo
 echo "Running the Docker container..."
 echo
 
@@ -110,7 +112,6 @@ docker stop telegram-smart-reminder-container &> /dev/null
 docker rm telegram-smart-reminder-container &> /dev/null || true
 
 if [ "$START_MODE" = "shell" ] ; then
-    echo "Running in background..."
     docker run \
     -d \
     -it \
@@ -118,6 +119,7 @@ if [ "$START_MODE" = "shell" ] ; then
     -p $PORT:$PORT \
     --name telegram-smart-reminder-container \
     telegram-smart-reminder && \
+    echo && \
     docker exec -it telegram-smart-reminder-container bash -c "echo 'The container is running in the background. This is a terminal session inside the container.' && echo 'Type \"exit\" to stop the container. IF YOU RUN \"exit\" THE SCRIPT WILL AUTOMATICALLY STOP THE CONTAINER.' && echo && echo 'You can open another terminal on your host and use:' && echo '  docker exec -it telegram-smart-reminder-container /bin/bash  # To open a new shell' && echo '  docker logs -f telegram-smart-reminder-container  # To view logs' && echo && bash"
 
 elif [ "$START_MODE" = "log" ] ; then
