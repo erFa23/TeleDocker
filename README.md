@@ -1,7 +1,7 @@
 # TeleDocker 🐳 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Status: Beta](https://img.shields.io/badge/Status-In_Development-orange?style=for-the-badge&logo=github)
 
-![Version: 0.1.0-dev](https://img.shields.io/badge/Version-0.1.0_dev-blue?style=for-the-badge)
+![Version: 0.1.0-dev](https://img.shields.io/badge/Version-1.0.0_dev-blue?style=for-the-badge)
 
 ## The "It Works Everywhere" solution for Telegram Bots.
 
